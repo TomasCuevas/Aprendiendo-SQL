@@ -1,0 +1,1 @@
+CREATE INDEX "country_continent" on country (continent);
