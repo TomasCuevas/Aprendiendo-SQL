@@ -169,6 +169,25 @@ ORDER BY
 /*
 "[{""user"" : 1797, ""comment"" : ""tempor mollit aliqua dolore cupidatat dolor tempor""}, {""user"" : 1842, ""comment"" : ""laborum mollit amet aliqua enim eiusmod ut""}, {""user"" : 1447, ""comment"" : ""nostrud nulla duis enim duis reprehenderit laboris voluptate cupidatat""}]"
  */
+SELECT
+    JSON_AGG (
+        JSON_BUILD_OBJECT ('user', a.user_id, 'comment', a.content)
+    )
+FROM
+    comments a
+WHERE
+    comment_parent_id = 1;
+
 -- ** 11. Avanzado
 -- Listar todos los comentarios principales (no respuestas) 
 -- Y crear una columna adicional "replies" con las respuestas en formato JSON
+SELECT
+    a.*,
+    JSON_AGG (JSON_BUILD_OBJECT ('comment', b.content)) as replies
+FROM
+    comments a
+    INNER JOIN comments b ON a.comment_id = b.comment_parent_id
+WHERE
+    a.comment_parent_id IS NULL
+GROUP BY
+    a.comment_id
